@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resellr — Operator Studio</title>
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+  <style>
+    /* ─── TOKENS ─── */
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.72rem, 0.68rem + 0.2vw, 0.82rem);
+      --text-sm: clamp(0.82rem, 0.78rem + 0.22vw, 0.92rem);
+      --text-base: clamp(0.92rem, 0.88rem + 0.18vw, 1rem);
+      --text-md: clamp(1rem, 0.94rem + 0.28vw, 1.18rem);
+      --text-lg: clamp(1.18rem, 1.05rem + 0.55vw, 1.55rem);
+      --text-xl: clamp(1.6rem, 1.2rem + 1.6vw, 2.8rem);
+      
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
+      --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem;
+      --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem;
+      --space-16: 4rem; --space-20: 5rem; --space-24: 6rem;
+      
+      --color-bg: #faf9f7;
+      --color-elevated: #ffffff;
+      --color-sunken: #f3f1ed;
+      --color-border: rgba(30, 25, 15, 0.08);
+      --color-border-strong: rgba(30, 25, 15, 0.14);
+      
+      --color-text: #1c1914;
+      --color-text-secondary: #6b655d;
+      --color-text-tertiary: #9a948a;
+      --color-text-inverse: #ffffff;
+      
+      --color-accent: #0d7377;
+      --color-accent-soft: rgba(13, 115, 119, 0.10);
+      --color-accent-hover: #0a5a5e;
+      --color-warm: #a67c52;
+      --color-warm-soft: rgba(166, 124, 82, 0.10);
+      --color-positive: #3a7d2e;
+      --color-positive-soft: rgba(58, 125, 46, 0.10);
+      --color-caution: #b87a2e;
+      --color-caution-soft: rgba(184, 122, 46, 0.10);
+      
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+      
+      --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px;
+      --radius-full: 9999px;
+      --font-body: 'Satoshi', system-ui, -apple-system, sans-serif;
+      --transition: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    [data-theme="dark"] {
+      --color-bg: #12110f;
+      --color-elevated: #1a1917;
+      --color-sunken: #161513;
+      --color-border: rgba(240, 235, 225, 0.06);
+      --color-border-strong: rgba(240, 235, 225, 0.10);
+      
+      --color-text: #eae6df;
+      --color-text-secondary: #a39d93;
+      --color-text-tertiary: #6e685f;
+      --color-text-inverse: #12110f;
+      
+      --color-accent: #6bb3b8;
+      --color-accent-soft: rgba(107, 179, 184, 0.12);
+      --color-accent-hover: #89c5c9;
+      --color-warm: #d4a574;
+      --color-warm-soft: rgba(212, 165, 116, 0.12);
+      --color-positive: #7bb86a;
+      --color-positive-soft: rgba(123, 184, 106, 0.12);
+      --color-caution: #e0a65a;
+      --color-caution-soft: rgba(224, 166, 90, 0.12);
+      
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.20);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.28);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.35);
+    }
+    
+    *, *::before, *::after { box-sizing: border-box; margin: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background: var(--color-bg);
+      min-height: 100dvh;
+    }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+    img { display: block; max-width: 100%; }
+    
+    .app {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100dvh;
+    }
+    
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      padding: var(--space-6) var(--space-5);
+      border-right: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+      overflow: auto;
+    }
+    
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--color-accent);
+      color: var(--color-text-inverse);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+    
+    .brand-text strong {
+      display: block;
+      font-size: var(--text-md);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .brand-text span {
+      display: block;
+      font-size: var(--text-xs);
+      color: var(--color-text-tertiary);
+      margin-top: 2px;
+    }
+    
+    .nav { display: flex; flex-direction: column; gap: 2px; }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--color-text-secondary);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      transition: all var(--transition);
+      position: relative;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .nav-item:hover { background: var(--color-sunken); color: var(--color-text); }
+    .nav-item.active {
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+      font-weight: 700;
+    }
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 50%;
+      transform: translateY(-50%);
+      width: 3px; height: 18px;
+      background: var(--color-accent);
+      border-radius: 0 3px 3px 0;
+    }
+    
+    .nav-icon { width: 18px; height: 18px; opacity: 0.6; transition: opacity var(--transition); flex-shrink: 0; }
+    .nav-item:hover .nav-icon, .nav-item.active .nav-icon { opacity: 1; }
+    
+    .sidebar-footer {
+      margin-top: auto;
+      padding: var(--space-4);
+      background: var(--color-sunken);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+    }
+    .sidebar-footer .label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); }
+    .sidebar-footer h4 { font-size: var(--text-sm); margin: var(--space-2) 0 var(--space-1); line-height: 1.3; }
+    .sidebar-footer p { font-size: var(--text-xs); color: var(--color-text-tertiary); line-height: 1.4; }
+    
+    .content { display: grid; grid-template-rows: auto 1fr; }
+    
+    .topbar {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-4) var(--space-6);
+      background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--color-border);
+    }
+    .topbar-title small { display: block; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-tertiary); margin-bottom: 2px; }
+    .topbar-title strong { font-size: var(--text-md); font-weight: 700; }
+    .topbar-actions { display: flex; align-items: center; gap: var(--space-3); }
+    
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: var(--space-2); padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm); font-weight: 600;
+      min-height: 40px;
+      transition: all var(--transition);
+    }
+    .btn-primary { background: var(--color-accent); color: var(--color-text-inverse); }
+    .btn-primary:hover { background: var(--color-accent-hover); }
+    .btn-secondary {
+      background: var(--color-elevated); color: var(--color-text);
+      border: 1px solid var(--color-border-strong);
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-secondary:hover { background: var(--color-sunken); }
+    .btn-icon {
+      width: 40px; padding: 0;
+      border-radius: var(--radius-md);
+      background: var(--color-elevated);
+      border: 1px solid var(--color-border-strong);
+      color: var(--color-text-secondary);
+    }
+    .btn-icon:hover { background: var(--color-sunken); color: var(--color-text); }
+    
+    .search-box {
+      display: flex; align-items: center; gap: var(--space-2);
+      padding: 10px 14px;
+      background: var(--color-elevated);
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-md);
+      min-width: 240px;
+      box-shadow: var(--shadow-sm);
+    }
+    .search-box input { border: none; outline: none; background: transparent; width: 100%; font-size: var(--text-sm); }
+    .search-box input::placeholder { color: var(--color-text-tertiary); }
+    
+    .main { padding: var(--space-6) var(--space-6) var(--space-12); }
+    
+    .page-header { margin-bottom: var(--space-8); }
+    .page-header .eyebrow {
+      display: inline-flex; align-items: center; gap: var(--space-2);
+      padding: 6px 12px;
+      background: var(--color-warm-soft); color: var(--color-warm);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+      margin-bottom: var(--space-4);
+    }
+    .page-header h1 {
+      font-size: var(--text-xl); font-weight: 900;
+      letter-spacing: -0.04em; line-height: 1.05;
+      max-width: 18ch; margin-bottom: var(--space-3);
+    }
+    .page-header p { color: var(--color-text-secondary); max-width: 60ch; line-height: 1.6; }
+    .page-header .actions { display: flex; gap: var(--space-3); margin-top: var(--space-5); }
+    
+    .metric-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-8);
+    }
+    .metric {
+      padding: var(--space-5);
+      background: var(--color-elevated);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .metric:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .metric .label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); margin-bottom: var(--space-2); }
+    .metric .value { font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem); font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: var(--space-2); }
+    .metric .context { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.4; }
+    .metric .delta { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-xs); font-weight: 700; margin-top: var(--space-2); }
+    .delta-up { color: var(--color-positive); }
+    .delta-down { color: var(--color-caution); }
+    
+    .content-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--space-5); }
+    .content-grid-3 { display: grid; grid-template-columns: 1.2fr 1fr 0.9fr; gap: var(--space-5); margin-top: var(--space-5); }
+    
+    .panel {
+      background: var(--color-elevated);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .panel-header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); padding: var(--space-5) var(--space-5) 0; }
+    .panel-header .eyebrow { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); margin-bottom: var(--space-1); }
+    .panel-header h2 { font-size: var(--text-md); font-weight: 700; letter-spacing: -0.01em; }
+    .panel-body { padding: var(--space-4) var(--space-5) var(--space-5); }
+    
+    .chart-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--space-5); }
+    .chart-header p { font-size: var(--text-sm); color: var(--color-text-secondary); margin: 0; }
+    .chart-highlight { font-size: var(--text-sm); font-weight: 700; color: var(--color-text); }
+    .bars { height: 200px; display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-3); align-items: end; padding-top: var(--space-6); }
+    .bar {
+      position: relative;
+      border-radius: var(--radius-md) var(--radius-md) 4px 4px;
+      background: linear-gradient(180deg, var(--color-accent), color-mix(in srgb, var(--color-accent) 55%, transparent));
+      transition: opacity var(--transition);
+    }
+    .bar:hover { opacity: 0.8; }
+    .bar.alt { background: linear-gradient(180deg, var(--color-warm), color-mix(in srgb, var(--color-warm) 55%, transparent)); }
+    .bar .amount { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: var(--text-xs); font-weight: 700; color: var(--color-text-secondary); white-space: nowrap; }
+    .bar .label { position: absolute; bottom: -24px; left: 50%; transform: translateX(-50%); font-size: var(--text-xs); color: var(--color-text-tertiary); white-space: nowrap; }
+    
+    .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .data-table th { padding: var(--space-3) var(--space-3) var(--space-3) 0; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); font-weight: 700; text-align: left; border-bottom: 1px solid var(--color-border); }
+    .data-table td { padding: var(--space-3) var(--space-3) var(--space-3) 0; font-size: var(--text-sm); border-bottom: 1px solid var(--color-border); vertical-align: middle; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .item-cell strong { display: block; font-size: var(--text-sm); font-weight: 600; }
+    .item-cell span { font-size: var(--text-xs); color: var(--color-text-tertiary); }
+    
+    .status { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: var(--radius-full); font-size: var(--text-xs); font-weight: 700; }
+    .status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .status-live { background: var(--color-accent-soft); color: var(--color-accent); }
+    .status-sold { background: var(--color-positive-soft); color: var(--color-positive); }
+    .status-stale { background: var(--color-caution-soft); color: var(--color-caution); }
+    
+    .form-stack { display: flex; flex-direction: column; gap: var(--space-4); }
+    .field { display: flex; flex-direction: column; gap: var(--space-1); }
+    .field label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); font-weight: 600; }
+    .input, select, textarea { padding: 12px 14px; background: var(--color-bg); border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); outline: none; font-size: var(--text-sm); transition: border-color var(--transition), box-shadow var(--transition); }
+    .input:focus, select:focus, textarea:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-soft); }
+    textarea { min-height: 110px; resize: vertical; line-height: 1.5; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+    
+    .platform-row { display: flex; align-items: center; justify-content: space-between; padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border); }
+    .platform-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .platform-info strong { display: block; font-size: var(--text-sm); font-weight: 600; }
+    .platform-info span { font-size: var(--text-xs); color: var(--color-text-tertiary); }
+    .platform-stats { text-align: right; }
+    .platform-stats strong { display: block; font-size: var(--text-md); font-weight: 700; }
+    .platform-stats span { font-size: var(--text-xs); color: var(--color-text-tertiary); }
+    
+    .insight-row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border); }
+    .insight-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .insight-row strong { display: block; font-size: var(--text-sm); font-weight: 600; margin-bottom: 2px; }
+    .insight-row p { margin: 0; font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.4; }
+    
+    .tag { display: inline-flex; align-items: center; padding: 5px 10px; border-radius: var(--radius-full); font-size: var(--text-xs); font-weight: 700; background: var(--color-warm-soft); color: var(--color-warm); white-space: nowrap; }
+    .tag-accent { background: var(--color-accent-soft); color: var(--color-accent); }
+    .tag-positive { background: var(--color-positive-soft); color: var(--color-positive); }
+    
+    @media (max-width: 1160px) {
+      .app { grid-template-columns: 76px 1fr; }
+      .brand-text, .sidebar-footer, .nav-item span { display: none; }
+      .brand { justify-content: center; padding-bottom: var(--space-4); }
+      .nav-item { justify-content: center; padding: 12px; }
+      .nav-item.active::before { display: none; }
+      .metric-strip, .content-grid, .content-grid-3 { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 720px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; flex-direction: row; align-items: center; padding: var(--space-4); gap: var(--space-4); border-right: none; border-bottom: 1px solid var(--color-border); }
+      .brand { padding: 0; border: none; }
+      .brand-text { display: block; }
+      .sidebar-footer { display: none; }
+      .nav { flex-direction: row; flex-wrap: wrap; flex: 1; }
+      .topbar { flex-wrap: wrap; gap: var(--space-3); padding: var(--space-3) var(--space-4); }
+      .search-box { min-width: unset; flex: 1; }
+      .main { padding: var(--space-4); }
+      .metric-strip, .content-grid, .content-grid-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">R</div>
+        <div class="brand-text">
+          <strong>Resellr</strong>
+          <span>Operator studio</span>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="nav-item active">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Overview</span>
+        </a>
+        <a class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          <span>Inventory</span>
+        </a>
+        <a class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span>Listings</span>
+        </a>
+        <a class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span>Profit</span>
+        </a>
+        <a class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          <span>Insights</span>
+        </a>
+        <a class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+          <span>Sourcing</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="label">Focus today</div>
+        <h4>Relist 4 stale jackets</h4>
+        <p>Items over 21 days old. Reposting should restore visibility.</p>
+      </div>
+    </aside>
+
+    <div class="content">
+      <header class="topbar">
+        <div class="topbar-title">
+          <small>Saturday, June 6</small>
+          <strong>Performance overview</strong>
+        </div>
+        <div class="topbar-actions">
+          <label class="search-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" placeholder="Search items, platforms..." />
+          </label>
+          <button class="btn btn-secondary">Export</button>
+          <button class="btn btn-primary">+ New item</button>
+          <button class="btn btn-icon" id="themeToggle" aria-label="Toggle theme">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="main">
+        <header class="page-header">
+          <div class="eyebrow">Resale operations suite</div>
+          <h1>Track what sells. Price with intent. Grow margin.</h1>
+          <p>A calm control panel for Vinted, Depop and eBay sellers. Centralise your inventory, draft stronger listings, and make decisions from real profit data.</p>
+          <div class="actions">
+            <button class="btn btn-primary">Create listing draft</button>
+            <button class="btn btn-secondary">Import inventory</button>
+          </div>
+        </header>
+
+        <div class="metric-strip">
+          <div class="metric">
+            <div class="label">Inventory value</div>
+            <div class="value">£3,842</div>
+            <div class="context">82 live items across three platforms.</div>
+            <div class="delta delta-up">↑ 12.4% this month</div>
+          </div>
+          <div class="metric">
+            <div class="label">Net profit</div>
+            <div class="value">£1,276</div>
+            <div class="context">After platform fees and sourcing cost.</div>
+            <div class="delta delta-up">↑ £208 this week</div>
+          </div>
+          <div class="metric">
+            <div class="label">Sell-through rate</div>
+            <div class="value">61%</div>
+            <div class="context">Healthy overall. Jackets need attention.</div>
+            <div class="delta delta-down">14 items ageing out</div>
+          </div>
+          <div class="metric">
+            <div class="label">Average ROI</div>
+            <div class="value">2.9×</div>
+            <div class="context">Best returns from branded outerwear.</div>
+            <div class="delta delta-up">Hoodies leading</div>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="eyebrow">Profit trend</div>
+                <h2>Weekly performance</h2>
+              </div>
+              <span class="tag tag-positive">Stable growth</span>
+            </div>
+            <div class="panel-body">
+              <div class="chart-header">
+                <p>Realised profit after all fees and sourcing cost.</p>
+                <span class="chart-highlight">Best week: £254</span>
+              </div>
+              <div class="bars">
+                <div class="bar" style="height:38%"><span class="amount">£98</span><span class="label">W1</span></div>
+                <div class="bar alt" style="height:54%"><span class="amount">£142</span><span class="label">W2</span></div>
+                <div class="bar" style="height:49%"><span class="amount">£128</span><span class="label">W3</span></div>
+                <div class="bar alt" style="height:72%"><span class="amount">£191</span><span class="label">W4</span></div>
+                <div class="bar" style="height:83%"><span class="amount">£223</span><span class="label">W5</span></div>
+                <div class="bar alt" style="height:95%"><span class="amount">£254</span><span class="label">W6</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="eyebrow">Listing assistant</div>
+                <h2>Generate platform copy</h2>
+              </div>
+              <span class="tag">Vinted</span>
+            </div>
+            <div class="panel-body">
+              <div class="form-stack">
+                <div class="field">
+                  <label>Item description</label>
+                  <input class="input" value="Nike vintage hoodie grey large" />
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label>Buy cost</label>
+                    <input class="input" value="£18" />
+                  </div>
+                  <div class="field">
+                    <label>Target ROI</label>
+                    <select><option>2×</option><option selected>3×</option><option>4×</option></select>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Platform</label>
+                  <select><option selected>Vinted</option><option>Depop</option><option>eBay</option></select>
+                </div>
+                <div class="field">
+                  <label>Generated description</label>
+                  <textarea>Clean vintage Nike hoodie in grey, size L. Soft heavyweight feel with classic swoosh front branding. Great everyday fit, strong casual layering piece. Good used condition with no major flaws. Ideal for streetwear styling or relaxed oversized looks. Message for exact measurements.</textarea>
+                </div>
+                <button class="btn btn-primary">Regenerate draft</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-grid-3">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="eyebrow">Inventory</div>
+                <h2>Recent items</h2>
+              </div>
+              <button class="btn btn-secondary" style="padding:8px 12px;font-size:var(--text-xs)">View all</button>
+            </div>
+            <div class="panel-body">
+              <table class="data-table">
+                <thead><tr><th>Item</th><th>Status</th><th>Cost</th><th style="text-align:right">Ask</th></tr></thead>
+                <tbody>
+                  <tr><td><div class="item-cell"><strong>Stussy tee</strong><span>Vinted · Menswear</span></div></td><td><span class="status status-live">Listed</span></td><td>£11</td><td style="text-align:right">£29</td></tr>
+                  <tr><td><div class="item-cell"><strong>Nike hoodie</strong><span>Depop · Vintage</span></div></td><td><span class="status status-live">Listed</span></td><td>£18</td><td style="text-align:right">£54</td></tr>
+                  <tr><td><div class="item-cell"><strong>Carhartt jacket</strong><span>eBay · Workwear</span></div></td><td><span class="status status-stale">Stale</span></td><td>£22</td><td style="text-align:right">£65</td></tr>
+                  <tr><td><div class="item-cell"><strong>Polo Ralph tee</strong><span>Vinted · Menswear</span></div></td><td><span class="status status-sold">Sold</span></td><td>£8</td><td style="text-align:right">£24</td></tr>
+                  <tr><td><div class="item-cell"><strong>Levis 501s</strong><span>Depop · Denim</span></div></td><td><span class="status status-live">Listed</span></td><td>£14</td><td style="text-align:right">£42</td></tr>
+                  <tr><td><div class="item-cell"><strong>Stone Island tee</strong><span>eBay · Designer</span></div></td><td><span class="status status-stale">Stale</span></td><td>£35</td><td style="text-align:right">£95</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="eyebrow">Platforms</div>
+                <h2>Profit split</h2>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="platform-row">
+                <div class="platform-info"><strong>Vinted</strong><span>34 items · no seller fees</span></div>
+                <div class="platform-stats"><strong>£524</strong><span>this month</span></div>
+              </div>
+              <div class="platform-row">
+                <div class="platform-info"><strong>Depop</strong><span>28 items · 10% fee</span></div>
+                <div class="platform-stats"><strong>£412</strong><span>this month</span></div>
+              </div>
+              <div class="platform-row">
+                <div class="platform-info"><strong>eBay</strong><span>20 items · 12.8% fee</span></div>
+                <div class="platform-stats"><strong>£340</strong><span>this month</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="eyebrow">AI insights</div>
+                <h2>Smart suggestions</h2>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="insight-row">
+                <div>
+                  <strong>Relist stale jackets</strong>
+                  <p>4 items aged 21+ days. Fresh listings recover views fast.</p>
+                </div>
+                <span class="tag">Now</span>
+              </div>
+              <div class="insight-row">
+                <div>
+                  <strong>Switch Carhartt to eBay</strong>
+                  <p>Workwear sells 2.4× faster on eBay vs Depop right now.</p>
+                </div>
+                <span class="tag tag-accent">Tip</span>
+              </div>
+              <div class="insight-row">
+                <div>
+                  <strong>Source more hoodies</strong>
+                  <p>Your highest ROI category at 3.8×. Restock while margins are strong.</p>
+                </div>
+                <span class="tag tag-positive">Growth</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    let theme = 'dark';
+    toggle.addEventListener('click', () => {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', theme);
+      toggle.innerHTML = theme === 'dark'
+        ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`
+        : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+    });
+  </script>
+</body>
+</html>
